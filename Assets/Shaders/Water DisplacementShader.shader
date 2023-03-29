@@ -21,87 +21,86 @@ Shader "Custom/WaterDisplace"
     }
     SubShader
     {
-        Pass
+        
+        CGPROGRAM
+        #pragma surface surf ToonRamp vertex:vert
+        #pragma multi_compile_fog
+        #include "UnityCG.cginc"
+        // Physically based Standard lighting model, and enable shadows on all light types
+        //#pragma surface surf Standard fullforwardshadows
+
+        fixed4 _Color;
+        sampler2D _MainTex;
+        sampler2D _RampTex;
+        float4 _MainTex_ST;
+        sampler2D _DisplacementMap;
+        half _DisplacementStrength;
+
+        half _v;
+        half _m;
+        half _z;
+        half _Amp;
+
+        half _speed;
+
+
+        struct Input
         {
+            float2 uv_MainTex;
+            float2 uv_RampTex;
+        };
 
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma multi_compile_fog
-            #include "UnityCG.cginc"
-            // Physically based Standard lighting model, and enable shadows on all light types
-            //#pragma surface surf Standard fullforwardshadows
+        struct appdata{
+            float4 vertex : POSITION;
+            float3 normal : NORMAL;
+            float4 texcoord : TEXCOORD0;
+            float4 texcoord1 : TEXCOORD1;
+            float4 texcoord2 : TEXCOORD2;
+        };
 
-            fixed4 _Color;
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            sampler2D _DisplacementMap;
-            half _DisplacementStrength;
+        float4 LightingToonRamp(SurfaceOutput s, fixed3 lightDir, fixed atten) {
 
-            half _v;
-            half _m;
-            half _z;
-            half _Amp;
+            float diff = dot(s.Normal, lightDir);
+            float h = diff * 0.5 + 0.5;
+            float2 rh = h;
+            float3 ramp = tex2D(_RampTex, rh).rgb;
 
-            half _speed;
+            float4 c;
+            c.rgb = s.Albedo * _LightColor0.rgb * (ramp);
+            c.a = s.Alpha;
+            return c;
+        }
 
 
-            struct Input
-            {
-                float2 uv_MainTex;
-            };
-
-            float4 LightingToonRamp(SurfaceOutput s, fixed3 lightDir, fixed atten) {
-
-                float diff = dot(s.Normal, lightDir);
-                float h = diff * 0.5 + 0.5;
-                float2 rh = h;
-                float3 ramp = tex2D(_RampTex, rh).rgb;
-
-                float4 c;
-                c.rgb = s.Albedo * _LightColor0.rgb * (ramp);
-                c.a = s.Alpha;
-                return c;
-            }
-
+        void vert(inout appdata_full v) {
             
+            float3 displaceCalc = v.vertex.xyz;
+            displaceCalc.y = _Amp * sin(displaceCalc.x * _v + _m *(_speed * _Time.y)) * _z ;
+            v.vertex.xyz = displaceCalc; 
+            float displacement = 0;
 
 
-            v2f vert(inout appdata_full v) {
-                v2f o;
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-
-                float3 displaceCalc = v.vertex.xyz;
-                displaceCalc.y = _Amp * sin(displaceCalc.x * _v + _m *(_speed * _Time.y)) * _z ;
-                v.vertex.xyz = displaceCalc; 
-                float displacement = tex2Dlod(_DisplacementMap, float4(o.uv, 0, 0)).r;
-                //float displacement = 0;
-
-                float4 temp = float4(v.vertex.x, v.vertex.y, v.vertex.z, 1.0);
-                temp.xyz += displacement * v.normal * _DisplacementStrength;
-                if(temp.y > 0){
-                    temp.y = 1 *_z;
-                }
-                else{
-                    temp.y = -1 *_z;
-                }
-                o.vertex = UnityObjectToClipPos(temp);
-   
-                //UNITY_TRANSFER_FOG(o, o.vertex);
-                return o;
+            float4 temp = float4(v.vertex.x, v.vertex.y, v.vertex.z, 1.0);
+            temp.xyz += displacement * v.normal * _DisplacementStrength;
+            if(temp.y > 0){
+                temp.y = 1 *_z;
             }
-
-            void surf (Input IN, SurfaceOutput o) {
-                fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-
-
-
-                o.Albedo = c.rgb;
-		    }
-
-            ENDCG
+            else{
+                temp.y = -1 *_z;
+            }
+            v.vertex.y = temp.y ;
+            v.normal = normalize(float3(v.normal.x + temp.y, v.normal.y, v.normal.z));
 
         }
+
+        void surf (Input IN, inout SurfaceOutput o) {
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
+
+            o.Albedo = _Color;
+        }
+
+        ENDCG
+
 
     }
 }
