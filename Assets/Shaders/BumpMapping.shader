@@ -4,8 +4,6 @@ Shader "Custom/BumpDisplace"
     {
         _Color("Color", Color) = (1,1,1,1)
         _MainTex("Albedo (RGB)", 2D) = "white" {}
-        _Glossiness("Smoothness", Range(0,1)) = 0.5
-        _Metallic("Metallic", Range(0,1)) = 0.0
         _DisplacementMap("Displacement", 2D) = "black" {}
         _DisplacementStrength("Displacement Strength", Range(0,5)) = 0.5
     }
@@ -22,8 +20,6 @@ Shader "Custom/BumpDisplace"
             // Physically based Standard lighting model, and enable shadows on all light types
             //#pragma surface surf Standard fullforwardshadows
 
-            half _Glossiness;
-            half _Metallic;
             fixed4 _Color;
             sampler2D _MainTex;
             float4 _MainTex_ST;

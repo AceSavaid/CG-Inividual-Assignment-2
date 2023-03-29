@@ -74,7 +74,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Amp: 5
+    - _Amp: 3.7
     - _BumpScale: 1
     - _Contribution: 0.5
     - _Cutoff: 0.5
@@ -93,9 +93,10 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
-    - _m: 0
-    - _v: 1
-    - _z: 0.2
+    - _m: -2.5
+    - _speed: 4.4
+    - _v: 2
+    - _z: 0.3
     m_Colors:
     - _Color: {r: 0.5529548, g: 0.67867756, b: 0.8962264, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

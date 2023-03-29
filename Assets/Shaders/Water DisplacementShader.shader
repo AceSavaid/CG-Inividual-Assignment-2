@@ -16,6 +16,8 @@ Shader "Custom/WaterDisplace"
         _z("Height", Range(-10,10)) = 1.0
         _Amp("Ampliture", Range(0,20)) = 5.0
 
+        _speed("Zoom",Range(-10,10)) = 1
+
     }
     SubShader
     {
@@ -41,39 +43,36 @@ Shader "Custom/WaterDisplace"
             half _z;
             half _Amp;
 
+            half _speed;
+
 
             struct Input
             {
                 float2 uv_MainTex;
             };
 
-            struct appdata {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-                float normal : NORMAL;
-            };
+            float4 LightingToonRamp(SurfaceOutput s, fixed3 lightDir, fixed atten) {
 
-            struct v2f
-            {
-                float2 uv :TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
-            };
+                float diff = dot(s.Normal, lightDir);
+                float h = diff * 0.5 + 0.5;
+                float2 rh = h;
+                float3 ramp = tex2D(_RampTex, rh).rgb;
 
-            // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-            // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-            // #pragma instancing_options assumeuniformscaling
-            UNITY_INSTANCING_BUFFER_START(Props)
-                // put more per-instance properties here
-            UNITY_INSTANCING_BUFFER_END(Props)
+                float4 c;
+                c.rgb = s.Albedo * _LightColor0.rgb * (ramp);
+                c.a = s.Alpha;
+                return c;
+            }
+
+            
 
 
-            v2f vert(appdata v) {
+            v2f vert(inout appdata_full v) {
                 v2f o;
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
                 float3 displaceCalc = v.vertex.xyz;
-                displaceCalc.y = _Amp * sin(displaceCalc.x * _v + _m) * _z ;
+                displaceCalc.y = _Amp * sin(displaceCalc.x * _v + _m *(_speed * _Time.y)) * _z ;
                 v.vertex.xyz = displaceCalc; 
                 float displacement = tex2Dlod(_DisplacementMap, float4(o.uv, 0, 0)).r;
                 //float displacement = 0;
@@ -81,10 +80,10 @@ Shader "Custom/WaterDisplace"
                 float4 temp = float4(v.vertex.x, v.vertex.y, v.vertex.z, 1.0);
                 temp.xyz += displacement * v.normal * _DisplacementStrength;
                 if(temp.y > 0){
-                    temp.y = 1;
+                    temp.y = 1 *_z;
                 }
                 else{
-                    temp.y = -1;
+                    temp.y = -1 *_z;
                 }
                 o.vertex = UnityObjectToClipPos(temp);
    
@@ -92,43 +91,16 @@ Shader "Custom/WaterDisplace"
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target{
-                fixed4 col = tex2D(_MainTex, i.uv)* _Color;
-                UNITY_APPLY_FOG(i.fogCoord, col)
-                return col;
+            void surf (Input IN, SurfaceOutput o) {
+                fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 
-            }
+
+
+                o.Albedo = c.rgb;
+		    }
+
             ENDCG
 
-        }
-
-        Pass
-        {
-            Tags {"LightMode" = "ShadowCaster"}
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma multi_compile_shadowcaster
-            #include "UnityCG.cginc"
-            struct appdata {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float4 texcoord : TEXCOORD0;
-            };
-            struct v2f {
-                V2F_SHADOW_CASTER;
-            };
-                v2f vert(appdata v)
-            {
-                    v2f o;
-                    TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-                    return o;
-            }
-                float4 frag(v2f i) : SV_Target
-            {
-                SHADOW_CASTER_FRAGMENT(i)
-            }
-            ENDCG
         }
 
     }

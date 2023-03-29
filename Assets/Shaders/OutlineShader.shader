@@ -17,6 +17,7 @@ Shader "Custom/OutlineShader"
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
         #pragma surface surf Lambert vertex:vert
+        
 
         sampler2D _MainTex;
 
