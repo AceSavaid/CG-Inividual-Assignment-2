@@ -36,7 +36,7 @@ For toon shading shading, I had to convert the shader from a vertex and fragment
 
 
 # Task 4 Explaining the script
-This script is used for rendering post processing effects onto the camera.  This can be told from the "void OnRenderImage" which is a camera/rendering function. It is upsampling the image by deviding the screen into several subsections and then 
+This script is used for rendering post processing effects onto the camera.  This can be told from the "void OnRenderImage" which is a camera/rendering function. It is upsampling the image by deviding the screen into several subsections and then using the information gathered to render the image in more detail but also causes blur. 
 
 
 
@@ -45,7 +45,11 @@ This script is used for rendering post processing effects onto the camera.  This
 This uses the normals and vertecies of a shader to create an additional layer of the object that can be coloured and thickened to create an outline effect.  This usues a pass so that it can perform operations on the object and material more than once.  To get the intended look, this pass needs to be done before the regular rendering of the object, as well as not use the Z buffer as this will allow what is rendered after it to always be infront of the outline effect. To add to this shader, the outline thickness and colour are togglable and a texture can be added. 
 
 ## Vertex Extrusion
-Using displacement maping to extude and intrude the vertecies.  This takes in a displacement map which is a greyscaled image and uses that to determine how much an image 
+Using displacement maping to extude and intrude the vertecies.  This takes in a displacement map which is a greyscaled image and uses that to determine how much vertex will be moved/displaced from its origin.  To add to this shaders, another level of scaling the displacement was added in addition to being able to add both a material and colouring to the material.  
+![image](https://user-images.githubusercontent.com/69608587/228680050-5fadfec6-c997-42e4-8211-7384ea5c5858.png)
+![image](https://user-images.githubusercontent.com/69608587/228681485-f2318d38-1f14-4c25-803e-61e76d409efa.png)
+
+
 
 
 # Task 6 Explaing the Script pt 2
