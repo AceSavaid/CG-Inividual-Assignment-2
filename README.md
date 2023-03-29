@@ -29,11 +29,13 @@ Square waves made.
 This was done by making a sine wave and then rounding the displacement to either 1 or -1 in vertex shader.  
 ![image](https://user-images.githubusercontent.com/69608587/228322420-072e5696-4c44-461a-b355-de3a099b4b0e.png)
 
-To perform movement a time variable was applied to the sine wave and another variable was added so that it could be togglable in process.
+To perform movement a time variable was applied to the sine wave and another variable was added so that it could be togglable in process.  
 ![image](https://user-images.githubusercontent.com/69608587/228428271-f8e29015-60c3-4ace-93ae-7f1652df7468.png)
 
-For toon shading shading, I had to convert the shader from a vertex and fragment shader to a surface shader and then apply toonshading to it. 
+For toon shading shading, I had to convert the shader from a vertex and fragment shader to a surface shader and then apply toonshading to it.  
+![image](https://user-images.githubusercontent.com/69608587/228684968-a08bdbfb-2b23-417d-b8e3-50a8fe036c26.png)
 
+Overall this differes from the shaders used to creat it as it uses both vertex shaders and surface shaders and combines the motion and togglable variables for both water movement and toon shading.  Additionally the water wave was converted from a sine wave to a square wave for the requirements of the project. 
 
 # Task 4 Explaining the script
 This script is used for rendering post processing effects onto the camera.  This can be told from the "void OnRenderImage" which is a camera/rendering function. It is upsampling the image by deviding the screen into several subsections and then using the information gathered to render the image in more detail but also causes blur. 
@@ -43,6 +45,7 @@ This script is used for rendering post processing effects onto the camera.  This
 # Task 5
 ## Outlining
 This uses the normals and vertecies of a shader to create an additional layer of the object that can be coloured and thickened to create an outline effect.  This usues a pass so that it can perform operations on the object and material more than once.  To get the intended look, this pass needs to be done before the regular rendering of the object, as well as not use the Z buffer as this will allow what is rendered after it to always be infront of the outline effect. To add to this shader, the outline thickness and colour are togglable and a texture can be added. 
+
 
 ## Vertex Extrusion
 Using displacement maping to extude and intrude the vertecies.  This takes in a displacement map which is a greyscaled image and uses that to determine how much vertex will be moved/displaced from its origin.  To add to this shaders, another level of scaling the displacement was added in addition to being able to add both a material and colouring to the material.  
