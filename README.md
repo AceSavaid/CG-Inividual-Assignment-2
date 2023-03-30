@@ -1,5 +1,5 @@
 # CG-Inividual-Assignment-2
-This is the 2nd individual project for computer graphics
+This is the 2nd individual project for computer graphics.  The 
 
 ## Task 1 - Create a repository for this assignment.
 New Unity project created and its empty scene built
@@ -38,20 +38,22 @@ For toon shading shading, I had to convert the shader from a vertex and fragment
 Overall this differes from the shaders used to creat it as it uses both vertex shaders and surface shaders and combines the motion and togglable variables for both water movement and toon shading.  Additionally the water wave was converted from a sine wave to a square wave for the requirements of the project. 
 
 # Task 4 Explaining the script
-This script is used for rendering post processing effects onto the camera.  This can be told from the "void OnRenderImage" which is a camera/rendering function. It is upsampling the image by deviding the screen into several subsections and then using the information gathered to render the image in more detail but also causes blur. 
+This script is used for rendering post processing effects onto the camera.  This can be told from the "void OnRenderImage" which is a camera/rendering function. It is blurring the image by deviding the screen into several subsections and then using the information gathered to render the image in less detail.  It does this 16 times going inwards until either it changes the resolution of the source inwards for all 16 texture samples taken our the height is too small to have reason to divide anymore.  
+![image](https://user-images.githubusercontent.com/69608587/228692478-de90c541-4360-4b90-889f-ccd38ea092c9.png)
 
+This can be used for games that want a more lower resoultion field or for special efects for example the resolution being lower when the player is close to death.  
 
 
 # Task 5
 ## Outlining
-This uses the normals and vertecies of a shader to create an additional layer of the object that can be coloured and thickened to create an outline effect.  This usues a pass so that it can perform operations on the object and material more than once.  To get the intended look, this pass needs to be done before the regular rendering of the object, as well as not use the Z buffer as this will allow what is rendered after it to always be infront of the outline effect. To add to this shader, the outline thickness and colour are togglable and a texture can be added. 
+This uses the normals and vertecies of a shader to create an additional layer of the object that can be coloured and thickened to create an outline effect.  This usues a pass so that it can perform operations on the object and material more than once.  To get the intended look, this pass needs to be done before the regular rendering of the object, as well as not use the Z buffer as this will allow what is rendered after it to always be infront of the outline effect. To add to this shader, the outline thickness and colour are togglable and a texture can be added.  
+![image](https://user-images.githubusercontent.com/69608587/228704450-f2c7d227-3679-4456-a099-7a47c50e55b5.png)
 
 
 ## Vertex Extrusion
 Using displacement maping to extude and intrude the vertecies.  This takes in a displacement map which is a greyscaled image and uses that to determine how much vertex will be moved/displaced from its origin.  To add to this shaders, another level of scaling the displacement was added in addition to being able to add both a material and colouring to the material.  
 ![image](https://user-images.githubusercontent.com/69608587/228680050-5fadfec6-c997-42e4-8211-7384ea5c5858.png)
 ![image](https://user-images.githubusercontent.com/69608587/228681485-f2318d38-1f14-4c25-803e-61e76d409efa.png)
-
 
 
 
@@ -65,6 +67,13 @@ It takes in the shadow attenuation and then multiplies the inverse of the attenu
 This can be used to add more stylistic effects and colour palete to a game or object. 
 
 # Task 7 - Explain a late game shader
-## Glass 
+## Textured Shadows
+This applies a texture and colour to the shadows casted onto the object.  This is through taking in a texture and colour of the shadow to use in the properties.  
+![image](https://user-images.githubusercontent.com/69608587/228701643-c4ef29c9-81cb-42ca-b46d-d21223e562d6.png)
 
+In the fragment shader, it gets the shadow attenuation from the shadoattenuation function.  This is used to get the shadowmap and whether or not the area of the object is shaded or not.  This is then used to calculate if to use the colour of the object multiplied by the light colour or the texture and shadow colour for the colouring of the object in that space.
+![image](https://user-images.githubusercontent.com/69608587/228702800-636bfc34-5bbd-43f2-ad91-58d9822b374d.png)
+![image](https://user-images.githubusercontent.com/69608587/228704184-2659c84b-eaa9-4cfc-a393-6174644e70e1.png)
+
+***Outlining was addeded to it to make it fit the rest of the project***
 
