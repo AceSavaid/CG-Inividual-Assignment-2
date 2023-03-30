@@ -1,4 +1,4 @@
-Shader "Custom/BumpDisplace"
+Shader "Alannis/BumpDisplace"
 {
     Properties
     {

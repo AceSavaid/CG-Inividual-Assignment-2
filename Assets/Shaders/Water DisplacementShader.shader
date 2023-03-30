@@ -24,7 +24,6 @@ Shader "Custom/WaterDisplace"
         
         CGPROGRAM
         #pragma surface surf ToonRamp vertex:vert
-        #pragma multi_compile_fog
         #include "UnityCG.cginc"
         // Physically based Standard lighting model, and enable shadows on all light types
         //#pragma surface surf Standard fullforwardshadows
@@ -32,7 +31,7 @@ Shader "Custom/WaterDisplace"
         fixed4 _Color;
         sampler2D _MainTex;
         sampler2D _RampTex;
-        float4 _MainTex_ST;
+        //float4 _MainTex_ST;
         sampler2D _DisplacementMap;
         half _DisplacementStrength;
 
@@ -58,18 +57,7 @@ Shader "Custom/WaterDisplace"
             float4 texcoord2 : TEXCOORD2;
         };
 
-        float4 LightingToonRamp(SurfaceOutput s, fixed3 lightDir, fixed atten) {
-
-            float diff = dot(s.Normal, lightDir);
-            float h = diff * 0.5 + 0.5;
-            float2 rh = h;
-            float3 ramp = tex2D(_RampTex, rh).rgb;
-
-            float4 c;
-            c.rgb = s.Albedo * _LightColor0.rgb * (ramp);
-            c.a = s.Alpha;
-            return c;
-        }
+        
 
 
         void vert(inout appdata_full v) {
@@ -92,14 +80,28 @@ Shader "Custom/WaterDisplace"
             v.normal = normalize(float3(v.normal.x + temp.y, v.normal.y, v.normal.z));
 
         }
+        float4 LightingToonRamp(SurfaceOutput s, fixed3 lightDir, fixed atten) {
+
+            float diff = dot(s.Normal, lightDir);
+            float h = diff * 0.5 + 0.5;
+            float2 rh = h;
+            float3 ramp = tex2D(_RampTex, rh).rgb;
+
+            float4 c;
+            c.rgb = s.Albedo * _LightColor0.rgb * (ramp);
+            c.a = s.Alpha;
+            return c;
+        }
 
         void surf (Input IN, inout SurfaceOutput o) {
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 
-            o.Albedo = _Color;
+            o.Albedo = _Color * c;
         }
 
         ENDCG
+
+        
 
 
     }
